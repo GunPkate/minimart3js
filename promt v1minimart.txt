@@ -1,0 +1,45 @@
+do not generate code you are senior SA you will 1.review my requirements below 2.ask question to pin point my requirement if I am missing something only ask necessary things and ask add solution as number choices keep it short, I will anwser by choice 3.only show what requirement is added 
+I am making a game minimart simulation which npc human as customer and employee in threejs
+I already have map and will focus on npc behavior
+1. create waypoint movement for npc make it editable in game and
+1.1 waypoint  must not overlap obstacle or wall
+1.2 waypoints can be overlaped
+1.3 waypoint is deleted when npc is removed
+1.4 system setting one day is 12 minutes
+1.5 first morning shift 5 minutes pre open 1 minute second night shift 5 minutes pre close 1 minute
+fast forward time 1x 1.2x 1.5x 2x 2.5x 3x 
+2.human class
+customer
+2.1 capital (json that contain {npcId:UUID,cash: 1000,  bankAccount: [{bank:"KBB",amount:1000}]}) display cash in square above npc avatar opacity 0.5
+2.2 wantedItem json {npcId:UUID, item: [{name:itemName1, qty:8 }, {name:itemName2, qty:10 }]}
+2.3 decision json {npcId:UUID,state: "statename" } state will 5 types 1."buying" (npc walk toward the item in in wantedItem), 2."thinking" (npc is idle done picking item and change state to "buying" to the next item or change state to "checkingout" when picked all items), 3."checkingout" (npc has picked all wanteditem and moving to POS) 4."done" (npc leave the minimart) 5."" (npc go to ATM and withdraw cash random cash amount min=next item price*amount max all money in bank if withdrawn amount is not enough withdraw next account ) !!give me state 5.name
+2.4 POS queing area customer by order
+employee
+2.5 task json{npcId:UUID,task:""} 1.cleaningFloor 2.cashier 3.restock
+2.6 decision json {npcId:UUID,state:"statename"} 1."working"(emp perform task) 2."break"(emp move into breaking area emp can be interacted wth customer if not in waiting area) 3."occupied"(lock interaction with only one customer)
+
+3.create npc(all) behaviour function
+3.1 createNPC when customer or emp walk in.
+3.2 removeNPC when customer or emp walk out.
+3.3 moveToWaypoint npc move in direction according to decision json.
+3.4 wandering around when state is "thinking"
+
+4.create npc(customer) behaviour function
+4.1 calculateMoney if npc finished picking item, npc will check if item in possession exceed cash or not. yes npc move to ATM and withdraw cash, no continue buying
+4.2 pickItems (can pick multiple qty)
+4.3 validatePickItems (check qty before picking)
+4.4 checkShelf (if no item is on the shelf 1.random num 0-1 2.if higher than 5 customer move to nearest emp 3. if not customer remove item in wantedItem and move on to next item)
+4.5 if 4.4 emp is occupied customer move to next emp (state is not "occupied") 
+
+5.create npc(emp) behaviour function
+5.1 cleanFloor
+5.2 checkStockByCustomer from 3.8 emp change state to "thinking" 1.if item is available change task to restock and move to pick item(default qty max amount of shelf/ remaining qty in stock) 2.emp change task to previous task.
+5.3 performCashier if customer in POS area is more than 0 1.emp who is the nearest to POS suspended onhand task and perform cashier task 2.emp change state to "occupied"
+
+6.system top right corner
+showCustomer number in minimart
+showCustomerPOS number in POS area
+
+7.6.system top left corner
+showOverall money amount
+emplist show task

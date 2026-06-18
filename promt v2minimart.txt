@@ -1,0 +1,93 @@
+I am making a game minimart simulation which npc human as customer and employee in threejs
+I already have map and will focus on npc behavior
+
+1. create waypoint movement for npc make it editable in game and
+1.1 waypoint must not overlap obstacle or wall
+1.2 waypoints can be overlaped
+1.3 waypoint is deleted when npc is removed
+1.4 system setting one day is 12 minutes
+1.5 first morning shift 5 minutes pre open 1 minute second night shift 5 minutes pre close 1 minute
+1.6 use waypoint graph and A* pathfinding between waypoints
+1.7 map is static and no runtime obstacle recalculation
+fast forward time 1x 1.2x 1.5x 2x 2.5x 3x
+
+2.human class
+
+customer
+2.1 capital (json that contain {npcId:UUID,cash:1000, bankAccount:[{bank:"KBB",amount:1000}]}) display cash in square above npc avatar opacity 0.5
+
+2.2 wantedItem json {npcId:UUID, item:[{name:itemName1, qty:8}, {name:itemName2, qty:10}]}
+
+2.3 decision json {npcId:UUID,state:"statename"} state will 5 types
+1."buying" (npc walk toward the item in wantedItem)
+2."thinking" (npc is idle done picking item and change state to "buying" to the next item or change state to "checkingout" when picked all items)
+3."checkingout" (npc has picked all wanteditem and moving to POS)
+4."done" (npc leave the minimart)
+5."withdrawing" (npc move to ATM and withdraw cash random cash amount min=next item price*amount max all money in bank if withdrawn amount is not enough withdraw next account)
+
+2.4 POS queuing area customer by order and queuing area size change depending on number of POS machines
+
+employee
+2.5 task json {npcId:UUID,task:""}
+1.cleaningFloor (emp move around minimart and clean floor)
+2.cashier (emp perform checkout process for customer in POS area)
+3.restock (emp move item from stock and refill shelf)
+4.idle (emp stay in waiting area until new task is assigned)
+5.patrol (emp walk predefined route and monitor shelf and customer)
+6.assistCustomer (emp guide customer to item location and answer stock request)
+
+2.6 role json {npcId:UUID,role:""}
+1.cashier (main responsibility is handling POS area and checkout process)
+2.floorStaff (main responsibility is assisting customer and maintaining minimart area)
+3.stocker (main responsibility is managing stock and refilling shelf)
+
+2.7 decision json {npcId:UUID,state:"statename"}
+1."working" (emp perform task)
+2."break" (emp move into breaking area emp can be interacted with customer if not in waiting area)
+3."occupied" (lock interaction with only one customer)
+
+2.8 previousTask json {npcId:UUID,task:""}
+
+3.create npc(all) behaviour function
+3.1 createNPC(type, spawnPosition) when customer or emp walk in
+3.2 customer use fixed interval spawn and input spawnPosition as parameter
+3.3 removeNPC when customer or emp walk out
+3.4 moveToWaypoint npc move in direction according to decision json
+3.5 wandering around when state is "thinking"
+
+4.create npc(customer) behaviour function
+4.1 calculateMoney if npc finished picking item, npc will check if item in possession exceed cash or not. yes npc move to ATM and withdraw cash, no continue buying
+4.2 pickItems (can pick multiple qty)
+4.3 validatePickItems (check qty before picking)
+4.4 checkShelf (if no item is on the shelf 1.random num 0-1 2.if higher than 5 customer move to nearest emp 3.if not customer remove item in wantedItem and move on to next item)
+4.5 if 4.4 emp is occupied customer move to next emp (state is not "occupied")
+
+5.create npc(emp) behaviour function
+5.1 cleanFloor
+5.2 checkStockByCustomer from 4.4 emp change state to "thinking"
+1.if item is available change task to restock and move to pick item (default qty max amount of shelf/remaining qty in stock)
+2.emp change task to previous task
+5.3 performCashier if customer in POS area is more than 0
+1.emp who is the nearest to POS suspended onhand task and perform cashier task if POS has no employee
+2.emp change state to "occupied"
+3.if no customer in POS area for 5 seconds emp change task to previous task
+5.4 employee task priority
+1.cashier = 100
+2.assistCustomer = 80
+3.restock = 60
+4.cleaningFloor = 40
+5.patrol = 20
+6.idle = 0
+5.5 assignTask
+1.when start shift assign employee role and task
+2.prioritize POS task first
+3.number of employee with cashier task depend on number of POS machines
+4.remaining employee are assigned to other task by priority
+
+6.system top right corner
+showCustomer number in minimart
+showCustomerPOS number in POS area
+
+7.system top left corner
+showOverall money amount
+empList show role and task

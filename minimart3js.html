@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Convenience Store</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a1a; overflow: hidden; font-family: sans-serif; }
+  #c { width: 100vw; height: 100vh; display: block; }
+  #hint { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    color: rgba(255,255,255,0.45); font-size: 13px; pointer-events: none; }
+  #lbl { position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.6); color: #fff; font-size: 13px;
+    padding: 4px 16px; border-radius: 20px; pointer-events: none;
+    opacity: 0; transition: opacity .3s; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hint">Drag to orbit · Scroll to zoom · Right-drag to pan</div>
+<div id="lbl"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="systemMain.js"></script>
+</body>
+</html>
