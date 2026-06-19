@@ -357,7 +357,7 @@ box(0.8, 0.04, 0.8, mats.shelf, 2.5, 0.75, -1.5);
    ORBIT CONTROLS (manual)
 ════════════════════════════════════════ */
 let drag = false, button = 0, lastX = 0, lastY = 0;
-let theta = 0.62, phi = 0.58, radius = 12;
+let theta = 0.2, phi = 1.3, radius = 12;
 const target = new THREE.Vector3(0, 1.5, 0);
 
 function updateCamera() {
